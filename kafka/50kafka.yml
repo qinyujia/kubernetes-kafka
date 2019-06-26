@@ -95,12 +95,7 @@ spec:
         emptyDir: {}
       - name: extensions
         emptyDir: {}
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: standard
-      resources:
-        requests:
-          storage: 10Gi
+      - name: data
+        hostPath:
+          path: /mnt/viid/kafka/data
+          type: DirectoryOrCreate   

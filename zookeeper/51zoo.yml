@@ -77,13 +77,8 @@ spec:
         configMap:
           name: zookeeper-config
       - name: config
-        emptyDir: {}
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: standard
-      resources:
-        requests:
-          storage: 1Gi
+        emptyDir: {}    
+      - name: data
+        hostPath:
+          path: /mnt/viid/zookeeper/data
+          type: DirectoryOrCreate 

@@ -1,0 +1,15 @@
+# A nodeport service to create DNS records
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-nodeport
+  namespace: kafka
+spec:
+  ports:
+  - port: 9092
+    nodePort: 30092
+  # [podname].broker.kafka.svc.cluster.local
+  selector:
+    app: kafka
+  type: NodePort  
