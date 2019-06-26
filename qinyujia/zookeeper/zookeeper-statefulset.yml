@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-zookeeper
+  namespace: kafka
+spec:
+  selector:
+    matchLabels:
+      app: kafka-zookeeper
+  serviceName: kafka-zookeeper-headless
+  template:
+    metadata:
+      labels:
+        app: kafka-zookeeper
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - /usr/bin/start-zk.sh
+        image: wurstmeister/zookeeper
+        imagePullPolicy: IfNotPresent
+        name: zookeeper
+        ports:
+        - containerPort: 2181
+          name: client
+          protocol: TCP
+        - containerPort: 3888
+          name: election
+          protocol: TCP
+        - containerPort: 2888
+          name: server
+          protocol: TCP
+        volumeMounts:
+        - name: data          
+          mountPath: /data
+        - name: config
+          mountPath: /opt/zookeeper-3.4.9/conf/zoo.cfg 
+          subPath: zoo.cfg
+      volumes:
+      - name: config
+        configMap:
+          name: zookeeper-config
+          items:
+            - key: zoo.cfg
+              path: zoo.cfg
+      - name: data
+        hostPath:
+          path: /mnt/viid/zookeeper/data
+          type: DirectoryOrCreate   

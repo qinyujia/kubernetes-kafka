@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: kafka
+  name: kafka
+  namespace: kafka
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kafka
+  serviceName: kafka-headless
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        env:
+        - name: KAFKA_HEAP_OPTS
+          value: -Xmx20G -Xms1G
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: kafka-zookeeper:2181
+        - name: KAFKA_ADVERTISED_HOST_NAME
+          value: kafka          
+        - name: KAFKA_LOG_DIRS
+          value: /kafka/disk1,/kafka/disk2
+        - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+          value: "false"
+        - name: KAFKA_JMX_PORT
+          value: "9999"
+        image: wurstmeister/kafka
+        name: kafka-broker
+        ports:
+        - containerPort: 9092
+          name: kafka
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /kafka/disk1
+          name: logdir1
+        - mountPath: /kafka/disk2
+          name: logdir2          
+      volumes:
+      - name: logdir1
+        hostPath:
+          # directory location on host
+          path: /mnt/viid/kafka/disk1
+          # this field is optional
+          type: DirectoryOrCreate     
+      - name: logdir2
+        hostPath:
+          # directory location on host
+          path: /mnt/viid/kafka/disk2
+          # this field is optional
+          type: DirectoryOrCreate                 
+      restartPolicy: Always
