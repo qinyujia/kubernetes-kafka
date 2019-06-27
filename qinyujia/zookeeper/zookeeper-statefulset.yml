@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: kafka-zookeeper
-  namespace: the-project
+  namespace: kafka
 spec:
   podManagementPolicy: OrderedReady
   replicas: 3
